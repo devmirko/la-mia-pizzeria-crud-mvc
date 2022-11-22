@@ -33,7 +33,12 @@ else
                     <td class="description">
                         @pizza.Description
                     </td>
-                    <td><a href="@Url.Action("Detail",new {id = pizza.Id})">info</a></td>
+                    <td>
+                        @*visualizza pizza*@
+                        <a class="btn btn-info btn-sm" href="@Url.Action("Detail", "Pizza", new {id = pizza.Id})">info</a>
+                        @*modifica pizza*@
+                        <a class="btn btn-warning btn-sm" href="@Url.Action("Update", "Pizza", new {id = pizza.Id})">Modifica</a>
+                     </td>
                 </tr>
             }
         </tbody>

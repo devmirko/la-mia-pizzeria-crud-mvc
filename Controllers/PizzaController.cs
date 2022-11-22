@@ -58,6 +58,51 @@ namespace la_mia_pizzeria_razor_layout.Controllers
 
         }
 
+        public IActionResult Update(int id)
+        {
+            Pizza pizza = db.Pizza.Where(pizza => pizza.Id == id).FirstOrDefault();
+
+            if (pizza == null)
+                return NotFound();
+
+            //return View() --> non funziona perchè non ha la memoria della post
+            return View(pizza);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Update(int id,Pizza formData)
+        {
+            if (!ModelState.IsValid)
+            {
+
+                return View("Update");
+            }
+
+            Pizza pizza = db.Pizza.Where(pizza => pizza.Id == id).FirstOrDefault();
+
+            if (pizza == null) {
+
+                return NotFound();
+
+            }
+               
+
+            pizza.Name = formData.Name;
+            pizza.Description = formData.Description;
+            pizza.Image = formData.Image;
+            pizza.Price = formData.Price;
+
+            
+            db.SaveChanges();
+
+            return RedirectToAction("Index");
+
+
+        }
+
+
+
 
 
 
