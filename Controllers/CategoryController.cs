@@ -41,5 +41,21 @@ namespace la_mia_pizzeria_razor_layout.Controllers
             return RedirectToAction("Index");
 
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Delete(int id)
+        {
+            Category category = db.Categories.Where(cat => cat.Id == id).Include(p => p.Pizza).FirstOrDefault();
+            if (category == null)
+                return NotFound();
+            if (category.Pizza.Count() > 0)
+            {
+                return NotFound();
+            }
+            db.Categories.Remove(category);
+            db.SaveChanges();
+            return RedirectToAction("Index");
+        }
     }
 }
