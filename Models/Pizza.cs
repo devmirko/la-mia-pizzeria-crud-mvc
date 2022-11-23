@@ -27,6 +27,12 @@ namespace la_mia_pizzeria_razor_layout.Models
         [PrezzoPizza]
         public double Price { get; set; }
 
+        //relazione 1 a n con CategoryId  è la  chiave esterna
+        public int CategoryId { get; set; }
+
+        //relazione 1 a n con Category l'istanza del record
+        public Category? Category { get; set; }
+
         public Pizza()
         {
 

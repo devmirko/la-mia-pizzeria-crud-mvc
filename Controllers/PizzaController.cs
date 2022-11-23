@@ -3,6 +3,8 @@ using la_mia_pizzeria_razor_layout.Data;
 using Microsoft.Extensions.Hosting;
 using la_mia_pizzeria_razor_layout.Models;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using la_mia_pizzeria_razor_layout.Models.Form;
+using Microsoft.SqlServer.Server;
 
 namespace la_mia_pizzeria_razor_layout.Controllers
 {
@@ -36,22 +38,33 @@ namespace la_mia_pizzeria_razor_layout.Controllers
 
         public IActionResult Create()
         {
-            return View("Create");
+            //creiamo una nuova variabile con l'instanza di pizzaform
+            PizzaForm pizzaData = new PizzaForm();
+
+            //assegniamo alla propieta pizza di pizzaData una nuova istanza dell'oogetto pizza
+            pizzaData.Pizza = new Pizza();
+
+            //assegniamo alla lista Categories di pizzaData una lista con tutte le categorie del db
+            pizzaData.Categories = db.Categories.ToList();
+
+            return View(pizzaData);
         }
 
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Pizza pizza)
+        public IActionResult Create(PizzaForm pizzaData)
         {
             if (!ModelState.IsValid)
             {
-                
-                return View();
+                //facciamo ritornare alla vista l'oggetto con tutte le categorie 
+                pizzaData.Categories = db.Categories.ToList();
+                return View(pizzaData);
             }
 
-            db.Pizza.Add(pizza);
+            db.Pizza.Add(pizzaData.Pizza);
             db.SaveChanges();
+
             return RedirectToAction("Index");
 
 
