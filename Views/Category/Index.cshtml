@@ -1,0 +1,28 @@
+﻿@model List<Category>
+
+<div>
+    <a class="nav-link text-dark" asp-area="" asp-controller="Category" asp-action="Create">Inserisci</a>
+</div>
+@if (Model.Count() == 0)
+{
+    <h3 class="text-center">Non sono presenti categorie.</h3>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>nome</th>      
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Category categoria in Model)
+            {
+                <tr>
+                    <td class="title">@categoria.Title</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+}
