@@ -62,6 +62,7 @@ namespace la_mia_pizzeria_razor_layout.Controllers
                 return View(pizzaData);
             }
 
+            //salviamo l'instanza pizza che si trova in pizzadata nel db
             db.Pizza.Add(pizzaData.Pizza);
             db.SaveChanges();
 
@@ -78,18 +79,27 @@ namespace la_mia_pizzeria_razor_layout.Controllers
             if (pizza == null)
                 return NotFound();
 
-            //return View() --> non funziona perchè non ha la memoria della post
-            return View(pizza);
+            //creiamo una nuova variabile con l'instanza di pizzaform
+            PizzaForm pizzaData = new PizzaForm();
+
+            pizzaData.Pizza = pizza;
+            pizzaData.Categories = db.Categories.ToList();
+
+
+            return View(pizzaData);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Update(int id,Pizza formData)
+        public IActionResult Update(int id, PizzaForm pizzaData)
         {
+            //assegniamo al ID di pizza presente in pizzaData l'id passato dal form
+            pizzaData.Pizza.Id = id;
+
             if (!ModelState.IsValid)
             {
-
-                return View("Update");
+                pizzaData.Categories = db.Categories.ToList();
+                return View(pizzaData);
             }
 
             Pizza pizza = db.Pizza.Where(pizza => pizza.Id == id).FirstOrDefault();
@@ -101,11 +111,11 @@ namespace la_mia_pizzeria_razor_layout.Controllers
             }
                
 
-            pizza.Name = formData.Name;
-            pizza.Description = formData.Description;
-            pizza.Image = formData.Image;
-            pizza.Price = formData.Price;
-
+            pizza.Name = pizzaData.Pizza.Name;
+            pizza.Description = pizzaData.Pizza.Description;
+            pizza.Image = pizzaData.Pizza.Image;
+            pizza.Price = pizzaData.Pizza.Price;
+            pizza.CategoryId = pizzaData.Pizza.CategoryId;
             
             db.SaveChanges();
 
