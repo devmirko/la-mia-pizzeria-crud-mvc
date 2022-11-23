@@ -5,6 +5,7 @@ using la_mia_pizzeria_razor_layout.Models;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using la_mia_pizzeria_razor_layout.Models.Form;
 using Microsoft.SqlServer.Server;
+using Microsoft.EntityFrameworkCore;
 
 namespace la_mia_pizzeria_razor_layout.Controllers
 {
@@ -21,7 +22,7 @@ namespace la_mia_pizzeria_razor_layout.Controllers
         {
             //PizzaDbContext db = new PizzaDbContext();
 
-            List<Pizza> listaPizza = db.Pizza.ToList();
+            List<Pizza> listaPizza = db.Pizza.Include(pizza => pizza.Category).ToList();
 
             return View(listaPizza);
         }
@@ -31,7 +32,7 @@ namespace la_mia_pizzeria_razor_layout.Controllers
 
             //PizzaDbContext db = new PizzaDbContext();
 
-            Pizza pizza = db.Pizza.Where(p => p.Id == id).FirstOrDefault();
+            Pizza pizza = db.Pizza.Where(p => p.Id == id).Include("Category").FirstOrDefault();
 
             return View(pizza);
         }
