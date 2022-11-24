@@ -48,10 +48,10 @@ namespace la_mia_pizzeria_razor_layout.Controllers
         {
             Category category = db.Categories.Where(cat => cat.Id == id).Include(p => p.Pizza).FirstOrDefault();
             if (category == null)
-                return NotFound();
+                return NotFound("Elemento non trovato");
             if (category.Pizza.Count() > 0)
             {
-                return NotFound();
+                return View("NotDelete");
             }
             db.Categories.Remove(category);
             db.SaveChanges();

@@ -51,7 +51,7 @@ namespace la_mia_pizzeria_razor_layout.Controllers
                 return NotFound();
             if (tag.Pizzas.Count() > 0)
             {
-                return NotFound();
+                return View("NotDelete");
             }
             db.Tags.Remove(tag);
             db.SaveChanges();

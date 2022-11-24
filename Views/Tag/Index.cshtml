@@ -25,7 +25,7 @@ else
                     <td class="title">@tag.Title</td>
                     <td>
                         @*Elimina Ingrediente*@
-                        <form asp-controller="Pizza" asp-action="Delete" asp-route-id="@tag.Id" method="post">
+                        <form asp-controller="Tag" asp-action="Delete" asp-route-id="@tag.Id" method="post">
                             <button type="submit" class="btn btn-danger btn-sm">
                                 Elimina
                             </button>
