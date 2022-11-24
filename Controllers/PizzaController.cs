@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using la_mia_pizzeria_razor_layout.Models.Form;
 using Microsoft.SqlServer.Server;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace la_mia_pizzeria_razor_layout.Controllers
 {
@@ -48,6 +49,20 @@ namespace la_mia_pizzeria_razor_layout.Controllers
             //assegniamo alla lista Categories di pizzaData una lista con tutte le categorie del db
             pizzaData.Categories = db.Categories.ToList();
 
+            //assegniamo alla propietà tags di pizzaData una nuova lista di tipo SelectListItem
+            pizzaData.Tags = new List<SelectListItem>();
+
+            //creiamo una nuova lista di tipo tag contente tutti i tag del db con una query
+            List<Tag> tagList = db.Tags.ToList();
+
+            //facciamo un for in taglist e andiamo ad aggiungere ogni iterazione alla lista Tags instaziando un oggetto SelectListItem
+            foreach (Tag tag in tagList)
+            {
+                pizzaData.Tags.Add(new SelectListItem(tag.Title, tag.Id.ToString()));
+            }
+
+
+
             return View(pizzaData);
         }
 
@@ -58,10 +73,37 @@ namespace la_mia_pizzeria_razor_layout.Controllers
         {
             if (!ModelState.IsValid)
             {
-                //facciamo ritornare alla vista l'oggetto con tutte le categorie 
+                //facciamo ritornare alla vista l'oggetto con tutte le categorie ed i tags
                 pizzaData.Categories = db.Categories.ToList();
+                pizzaData.Tags = new List<SelectListItem>();
+
+
+                //creiamo una nuova lista di tipo tag contente tutti i tag del db con una query
+                List<Tag> tagList = db.Tags.ToList();
+
+                //facciamo un for in taglist e andiamo ad aggiungere ogni iterazione alla lista Tags instaziando un oggetto SelectListItem
+                foreach (Tag tag in tagList)
+                {
+                    pizzaData.Tags.Add(new SelectListItem(tag.Title, tag.Id.ToString()));
+                }
+
                 return View(pizzaData);
             }
+
+            //associazione dei tag selezionato dall'utente al modello
+            //creando una nuova lista di tipo tag, dove poi andremo ad aggiungere i tag selezionati dall'utente
+            pizzaData.Pizza.Tags = new List<Tag>();
+
+            foreach (int tagId in pizzaData.SelectedTags)
+            {
+                //ad ogni iterazione vai nella tabella tags e trova i tags uguali a quelli che a selezionato l'utente
+                Tag tag = db.Tags.Where(t => t.Id == tagId).FirstOrDefault();
+                //le iterazioni uguali vengono aggiunte al database
+                pizzaData.Pizza.Tags.Add(tag);
+
+
+            }
+
 
             //salviamo l'instanza pizza che si trova in pizzadata nel db
             db.Pizza.Add(pizzaData.Pizza);

@@ -47,6 +47,17 @@
                         }
                     </select>
                 </div>
+                @*sezione di scelta dei ingredienti*@
+                <div class="mb-3">
+                    <strong>Ingredienti:</strong>
+                    <select asp-for="SelectedTags"
+                            asp-items="@Model.Tags"
+                            multiple="multiple"
+                            size="10"
+                            class="form-control mb-2 mr-sm-2 ml-sm-3 leftList">
+                    </select>
+                </div>
+
 
                 <div class="text-end">
                     <input type="submit" class="btn btn-small btn-success" value="Salva">
