@@ -33,6 +33,9 @@ namespace la_mia_pizzeria_razor_layout.Models
         //relazione 1 a n con Category l'istanza del record
         public Category? Category { get; set; }
 
+        //relazione molti a molti con Tag
+        public List<Tag>? Tags { get; set; }
+
         public Pizza()
         {
 

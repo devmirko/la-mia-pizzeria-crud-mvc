@@ -9,6 +9,8 @@ namespace la_mia_pizzeria_razor_layout.Data
         public DbSet<Pizza> Pizza { get; set; }
         public DbSet<Category> Categories { get; set; }
 
+        public DbSet<Tag> Tags { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
 
