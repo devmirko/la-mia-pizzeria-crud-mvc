@@ -7,6 +7,7 @@ using la_mia_pizzeria_razor_layout.Models.Form;
 using Microsoft.SqlServer.Server;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Diagnostics;
 
 namespace la_mia_pizzeria_razor_layout.Controllers
 {
@@ -33,7 +34,7 @@ namespace la_mia_pizzeria_razor_layout.Controllers
 
             //PizzaDbContext db = new PizzaDbContext();
 
-            Pizza pizza = db.Pizza.Where(p => p.Id == id).Include("Category").FirstOrDefault();
+            Pizza pizza = db.Pizza.Where(p => p.Id == id).Include("Category").Include("Tags").FirstOrDefault();
 
             return View(pizza);
         }
@@ -117,7 +118,7 @@ namespace la_mia_pizzeria_razor_layout.Controllers
 
         public IActionResult Update(int id)
         {
-            Pizza pizza = db.Pizza.Where(pizza => pizza.Id == id).FirstOrDefault();
+            Pizza pizza = db.Pizza.Where(pizza => pizza.Id == id).Include(p => p.Tags).FirstOrDefault();
 
             if (pizza == null)
                 return NotFound();
@@ -127,6 +128,19 @@ namespace la_mia_pizzeria_razor_layout.Controllers
 
             pizzaData.Pizza = pizza;
             pizzaData.Categories = db.Categories.ToList();
+            pizzaData.Tags = new List<SelectListItem>();
+
+            List<Tag> tagsList = db.Tags.ToList();
+
+            foreach (Tag tag in tagsList)
+            {
+                pizzaData.Tags.Add(new SelectListItem(
+                    tag.Title,
+                    tag.Id.ToString(),
+                    //la funzione Any ritorna true sui tag presenti nell'oggetto pizza che sono uguali a quelli del db.
+                    pizza.Tags.Any(t => t.Id == tag.Id)
+                    ));
+            }
 
 
             return View(pizzaData);
@@ -137,15 +151,28 @@ namespace la_mia_pizzeria_razor_layout.Controllers
         public IActionResult Update(int id, PizzaForm pizzaData)
         {
             //assegniamo al ID di pizza presente in pizzaData l'id passato dal form
-            pizzaData.Pizza.Id = id;
+            //pizzaData.Pizza.Id = id;
 
             if (!ModelState.IsValid)
             {
+                pizzaData.Pizza.Id = id;
                 pizzaData.Categories = db.Categories.ToList();
+                pizzaData.Tags = new List<SelectListItem>();
+
+
+                //creiamo una nuova lista di tipo tag contente tutti i tag del db con una query
+                List<Tag> tagList = db.Tags.ToList();
+
+                //facciamo un for in taglist e andiamo ad aggiungere ogni iterazione alla lista Tags instaziando un oggetto SelectListItem
+                foreach (Tag tag in tagList)
+                {
+                    pizzaData.Tags.Add(new SelectListItem(tag.Title, tag.Id.ToString()));
+                }
+
                 return View(pizzaData);
             }
 
-            Pizza pizza = db.Pizza.Where(pizza => pizza.Id == id).FirstOrDefault();
+            Pizza pizza = db.Pizza.Where(pizza => pizza.Id == id).Include(p => p.Tags).FirstOrDefault();
 
             if (pizza == null) {
 
@@ -159,7 +186,28 @@ namespace la_mia_pizzeria_razor_layout.Controllers
             pizza.Image = pizzaData.Pizza.Image;
             pizza.Price = pizzaData.Pizza.Price;
             pizza.CategoryId = pizzaData.Pizza.CategoryId;
-            
+
+            //eliminiamo i tags presenti nel oggetto presente sul db
+            pizza.Tags.Clear();
+
+            //se la lista SelectedTags ci arriva nulla la instanziamo con una lista vuota per farli passare la validazione
+            if (pizzaData.SelectedTags == null)
+            {
+                pizzaData.SelectedTags = new List<int>();
+            }
+
+            foreach (int tagId in pizzaData.SelectedTags)
+            {
+                //ad ogni iterazione vai nella tabella tags e trova i tags uguali a quelli che a selezionato l'utente
+                Tag tag = db.Tags.Where(t => t.Id == tagId).FirstOrDefault();
+                //le iterazioni uguali vengono aggiunte al database
+                pizza.Tags.Add(tag);
+
+
+            }
+
+
+
             db.SaveChanges();
 
             return RedirectToAction("Index");

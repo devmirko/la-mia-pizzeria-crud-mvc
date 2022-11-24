@@ -14,7 +14,7 @@
                 </div>
          
                 <p>
-                    <strong>Ingredienti:</strong>
+                    <strong>Descrizione:</strong>
                     @Model.Description
                 </p>
                 <p>
@@ -25,6 +25,15 @@
                     <strong>Categoria:</strong>
                     @Model.Category.Title
                 </p>
+                <p>
+                 <strong>Ingredienti:</strong>
+                 @foreach (Tag tag in Model.Tags)
+                {
+                    <div>
+                        <span class="badge bg-secondary">@tag.Title</span>
+                    </div>
+                }
+                 </p>
             </div>
         </div>
     </div>
