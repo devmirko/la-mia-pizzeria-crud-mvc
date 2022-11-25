@@ -53,10 +53,10 @@ namespace la_mia_pizzeria_razor_layout.Controllers
             Category category = pizzaRepository.GetByIdCategory(id);
             if (category == null)
                 return NotFound("Elemento non trovato");
-            if (category.Pizza.Count() > 0)
-            {
-                return View("NotDelete");
-            }
+            //if (category.Pizza.Count() > 0)
+            //{
+            //    return View("NotDelete");
+            //}
 
             pizzaRepository.DeleteCategory(category);
 

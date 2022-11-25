@@ -121,8 +121,32 @@ namespace la_mia_pizzeria_razor_layout.Models.Repositories
 
         public void AddCategory(Category category)
         {
-            category.Id = Categories.Count;
-            category.Title = "Fake Category";
+            Random rnd = new Random();
+            category.Id = rnd.Next(1,5);
+
+
+            
+            Random rand = new Random();
+
+            
+            int stringlen = rand.Next(4, 10);
+            int randValue;
+            string str = "";
+            char letter;
+            for (int i = 0; i < stringlen; i++)
+            {
+
+                
+                randValue = rand.Next(0, 26);
+
+                
+                letter = Convert.ToChar(randValue + 65);
+
+                
+                str = str + letter;
+            }
+            
+            category.Title = str;
 
             Categories.Add(category);
 
@@ -130,14 +154,43 @@ namespace la_mia_pizzeria_razor_layout.Models.Repositories
 
         public void AddTag(Tag tag)
         {
-            tag.Id = Tags.Count;
-            tag.Title = "Fake tag";
+            Random rnd = new Random();
+
+            tag.Id = rnd.Next(1, 5);
+
+            Random rand = new Random();
+
+
+            int stringlen = rand.Next(4, 10);
+            int randValue;
+            string str = "";
+            char letter;
+            for (int i = 0; i < stringlen; i++)
+            {
+
+
+                randValue = rand.Next(0, 26);
+
+
+                letter = Convert.ToChar(randValue + 65);
+
+
+                str = str + letter;
+            }
+            tag.Title = str;
 
             Tags.Add(tag);
 
         }
 
+       
+        
 
-
+           
+        
     }
+
+
+
 }
+

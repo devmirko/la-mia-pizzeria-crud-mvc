@@ -53,10 +53,10 @@ namespace la_mia_pizzeria_razor_layout.Controllers
             Tag tag = pizzaRepository.GetByIdTag(id);
             if (tag == null)
                 return NotFound();
-            if (tag.Pizzas.Count() > 0)
-            {
-                return View("NotDelete");
-            }
+            //if (tag.Pizzas.Count() > 0)
+            //{
+            //    return View("NotDelete");
+            //}
 
             pizzaRepository.DeleteTag(tag);
             return RedirectToAction("Index");
