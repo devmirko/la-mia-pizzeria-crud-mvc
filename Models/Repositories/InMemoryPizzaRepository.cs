@@ -66,6 +66,16 @@ namespace la_mia_pizzeria_razor_layout.Models.Repositories
             Pizzas.Remove(pizza);
         }
 
+        public void DeleteCategory(Category categories)
+        {
+            Categories.Remove(categories);
+        }
+
+        public void DeleteTag(Tag tag)
+        {
+            Tags.Remove(tag);
+        }
+
         public Pizza GetById(int id)
         {
             Pizza pizza = Pizzas.Where(pizza => pizza.Id == id).FirstOrDefault();
@@ -73,6 +83,24 @@ namespace la_mia_pizzeria_razor_layout.Models.Repositories
             pizza.Category = new Category() { Id = 1, Title = "Fake cateogry" };
 
             return pizza;
+        }
+
+        public Category GetByIdCategory(int id)
+        {
+            Category category = Categories.Where(C => C.Id == id).FirstOrDefault();
+
+           
+
+            return category;
+        }
+
+        public Tag GetByIdTag(int id)
+        {
+            Tag tag = Tags.Where(t => t.Id == id).FirstOrDefault();
+
+
+
+            return tag;
         }
 
 
@@ -88,6 +116,24 @@ namespace la_mia_pizzeria_razor_layout.Models.Repositories
             TagToPost(pizza, selectedTags);
             
 
+
+        }
+
+        public void AddCategory(Category category)
+        {
+            category.Id = Categories.Count;
+            category.Title = "Fake Category";
+
+            Categories.Add(category);
+
+        }
+
+        public void AddTag(Tag tag)
+        {
+            tag.Id = Tags.Count;
+            tag.Title = "Fake tag";
+
+            Tags.Add(tag);
 
         }
 

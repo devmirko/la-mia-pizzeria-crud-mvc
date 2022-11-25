@@ -1,5 +1,6 @@
 ﻿using la_mia_pizzeria_razor_layout.Data;
 using la_mia_pizzeria_razor_layout.Models;
+using la_mia_pizzeria_razor_layout.Models.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,15 +9,19 @@ namespace la_mia_pizzeria_razor_layout.Controllers
     public class TagController : Controller
     {
 
-        PizzaDbContext db;
+        //PizzaDbContext db;
 
-        public TagController() : base()
+        IDbPizzaRepository pizzaRepository;
+
+        public TagController(IDbPizzaRepository _pizzaRepository) : base()
         {
-            db = new PizzaDbContext();
+            //db = new PizzaDbContext();
+
+            pizzaRepository = _pizzaRepository;
         }
         public IActionResult Index()
         {
-            List<Tag> tags = db.Tags.ToList();
+            List<Tag> tags = pizzaRepository.AllTag();
             return View(tags);
         }
 
@@ -35,8 +40,7 @@ namespace la_mia_pizzeria_razor_layout.Controllers
                 return View(tag);
             }
 
-            db.Tags.Add(tag);
-            db.SaveChanges();
+            pizzaRepository.AddTag(tag);
 
             return RedirectToAction("Index");
 
@@ -46,15 +50,15 @@ namespace la_mia_pizzeria_razor_layout.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Delete(int id)
         {
-            Tag tag = db.Tags.Where(t => t.Id == id).Include(p => p.Pizzas).FirstOrDefault();
+            Tag tag = pizzaRepository.GetByIdTag(id);
             if (tag == null)
                 return NotFound();
             if (tag.Pizzas.Count() > 0)
             {
                 return View("NotDelete");
             }
-            db.Tags.Remove(tag);
-            db.SaveChanges();
+
+            pizzaRepository.DeleteTag(tag);
             return RedirectToAction("Index");
         }
     }

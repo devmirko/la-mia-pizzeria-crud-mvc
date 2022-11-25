@@ -1,5 +1,6 @@
 ﻿using la_mia_pizzeria_razor_layout.Data;
 using la_mia_pizzeria_razor_layout.Models;
+using la_mia_pizzeria_razor_layout.Models.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,15 +9,19 @@ namespace la_mia_pizzeria_razor_layout.Controllers
     public class CategoryController : Controller
     {
 
-        PizzaDbContext db;
+        //PizzaDbContext db;
 
-        public CategoryController() : base()
+        IDbPizzaRepository pizzaRepository;
+
+        public CategoryController(IDbPizzaRepository _pizzaRepository) : base()
         {
-            db = new PizzaDbContext();
+            //db = new PizzaDbContext();
+
+            pizzaRepository = _pizzaRepository;
         }
         public IActionResult Index()
         {
-            List<Category> categories = db.Categories.ToList();
+            List<Category> categories = pizzaRepository.AllCategory();
             return View(categories);
         }
 
@@ -35,8 +40,7 @@ namespace la_mia_pizzeria_razor_layout.Controllers
                 return View(category);
             }
 
-            db.Categories.Add(category);
-            db.SaveChanges();
+            pizzaRepository.AddCategory(category);
 
             return RedirectToAction("Index");
 
@@ -46,15 +50,16 @@ namespace la_mia_pizzeria_razor_layout.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Delete(int id)
         {
-            Category category = db.Categories.Where(cat => cat.Id == id).Include(p => p.Pizza).FirstOrDefault();
+            Category category = pizzaRepository.GetByIdCategory(id);
             if (category == null)
                 return NotFound("Elemento non trovato");
             if (category.Pizza.Count() > 0)
             {
                 return View("NotDelete");
             }
-            db.Categories.Remove(category);
-            db.SaveChanges();
+
+            pizzaRepository.DeleteCategory(category);
+
             return RedirectToAction("Index");
         }
     }
