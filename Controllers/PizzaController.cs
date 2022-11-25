@@ -14,7 +14,7 @@ namespace la_mia_pizzeria_razor_layout.Controllers
 {
     public class PizzaController : Controller
     {
-        PizzaDbContext db;
+        
 
         IDbPizzaRepository pizzaRepository;
 
@@ -22,7 +22,7 @@ namespace la_mia_pizzeria_razor_layout.Controllers
 
         public PizzaController(IDbPizzaRepository _pizzaRepository) : base()
         {
-            db = new PizzaDbContext();
+           
 
             pizzaRepository = _pizzaRepository;
         }
@@ -65,13 +65,13 @@ namespace la_mia_pizzeria_razor_layout.Controllers
             pizzaData.Pizza = new Pizza();
 
             //assegniamo alla lista Categories di pizzaData una lista con tutte le categorie del db
-            pizzaData.Categories = db.Categories.ToList();
+            pizzaData.Categories = pizzaRepository.AllCategory();
 
             //assegniamo alla propietà tags di pizzaData una nuova lista di tipo SelectListItem
             pizzaData.Tags = new List<SelectListItem>();
 
             //creiamo una nuova lista di tipo tag contente tutti i tag del db con una query
-            List<Tag> tagList = db.Tags.ToList();
+            List<Tag> tagList = pizzaRepository.AllTag();
 
             //facciamo un for in taglist e andiamo ad aggiungere ogni iterazione alla lista Tags instaziando un oggetto SelectListItem
             foreach (Tag tag in tagList)
@@ -92,12 +92,12 @@ namespace la_mia_pizzeria_razor_layout.Controllers
             if (!ModelState.IsValid)
             {
                 //facciamo ritornare alla vista l'oggetto con tutte le categorie ed i tags
-                pizzaData.Categories = db.Categories.ToList();
+                pizzaData.Categories = pizzaRepository.AllCategory();
                 pizzaData.Tags = new List<SelectListItem>();
 
 
                 //creiamo una nuova lista di tipo tag contente tutti i tag del db con una query
-                List<Tag> tagList = db.Tags.ToList();
+                List<Tag> tagList = pizzaRepository.AllTag();
 
                 //facciamo un for in taglist e andiamo ad aggiungere ogni iterazione alla lista Tags instaziando un oggetto SelectListItem
                 foreach (Tag tag in tagList)
@@ -132,10 +132,10 @@ namespace la_mia_pizzeria_razor_layout.Controllers
             PizzaForm pizzaData = new PizzaForm();
 
             pizzaData.Pizza = pizza;
-            pizzaData.Categories = db.Categories.ToList();
+            pizzaData.Categories = pizzaRepository.AllCategory();
             pizzaData.Tags = new List<SelectListItem>();
 
-            List<Tag> tagsList = db.Tags.ToList();
+            List<Tag> tagsList = pizzaRepository.AllTag();
 
             foreach (Tag tag in tagsList)
             {
@@ -159,12 +159,12 @@ namespace la_mia_pizzeria_razor_layout.Controllers
             if (!ModelState.IsValid)
             {
                 pizzaData.Pizza.Id = id;
-                pizzaData.Categories = db.Categories.ToList();
+                pizzaData.Categories = pizzaRepository.AllCategory();
                 pizzaData.Tags = new List<SelectListItem>();
 
 
                 //creiamo una nuova lista di tipo tag contente tutti i tag del db con una query
-                List<Tag> tagList = db.Tags.ToList();
+                List<Tag> tagList = pizzaRepository.AllTag();
 
                 //facciamo un for in taglist e andiamo ad aggiungere ogni iterazione alla lista Tags instaziando un oggetto SelectListItem
                 foreach (Tag tag in tagList)

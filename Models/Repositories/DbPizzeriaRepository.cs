@@ -75,6 +75,17 @@ namespace la_mia_pizzeria_razor_layout.Models.Repositories
         }
 
 
+        public List<Category> AllCategory()
+        {
+            return db.Categories.ToList();
+        }
+
+        public List<Tag> AllTag()
+        {
+            return db.Tags.ToList();
+        }
+
+
 
 
 

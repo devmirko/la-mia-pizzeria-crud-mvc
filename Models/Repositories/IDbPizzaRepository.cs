@@ -5,6 +5,11 @@ namespace la_mia_pizzeria_razor_layout.Models.Repositories
     public interface IDbPizzaRepository
     {
         List<Pizza> All();
+
+        List<Category> AllCategory();
+
+        List<Tag> AllTag();
+
         void Create(Pizza post, List<int> selectedTags);
 
         void Delete(Pizza post);

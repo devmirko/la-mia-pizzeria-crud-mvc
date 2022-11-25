@@ -6,6 +6,13 @@ namespace la_mia_pizzeria_razor_layout.Models.Repositories
     {
         public static List<Pizza> Pizzas = new List<Pizza>();
 
+        public static List<Category> Categories = new List<Category>();
+
+        public static List<Tag> Tags = new List<Tag>();
+
+
+
+
         public InMemoryPizzaRepository()
         {
             
@@ -15,6 +22,16 @@ namespace la_mia_pizzeria_razor_layout.Models.Repositories
         public List<Pizza> All()
         {
             return Pizzas;
+        }
+
+        public List<Category> AllCategory()
+        {
+            return Categories;
+        }
+
+        public List<Tag> AllTag()
+        {
+            return Tags;
         }
 
 
