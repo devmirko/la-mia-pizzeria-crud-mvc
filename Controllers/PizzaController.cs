@@ -15,6 +15,8 @@ namespace la_mia_pizzeria_razor_layout.Controllers
     {
         PizzaDbContext db;
 
+        
+
         public PizzaController() : base()
         {
             db = new PizzaDbContext();
@@ -24,7 +26,9 @@ namespace la_mia_pizzeria_razor_layout.Controllers
         {
             //PizzaDbContext db = new PizzaDbContext();
 
+            //inserimento metodo all
             List<Pizza> listaPizza = db.Pizza.Include(pizza => pizza.Category).ToList();
+            //fine
 
             return View(listaPizza);
         }
@@ -34,7 +38,9 @@ namespace la_mia_pizzeria_razor_layout.Controllers
 
             //PizzaDbContext db = new PizzaDbContext();
 
+            //inserimento metodo GetById
             Pizza pizza = db.Pizza.Where(p => p.Id == id).Include("Category").Include("Tags").FirstOrDefault();
+            //fine
 
             return View(pizza);
         }
@@ -91,6 +97,7 @@ namespace la_mia_pizzeria_razor_layout.Controllers
                 return View(pizzaData);
             }
 
+            //implementazione del metodo create
             //associazione dei tag selezionato dall'utente al modello
             //creando una nuova lista di tipo tag, dove poi andremo ad aggiungere i tag selezionati dall'utente
             pizzaData.Pizza.Tags = new List<Tag>();
@@ -109,7 +116,7 @@ namespace la_mia_pizzeria_razor_layout.Controllers
             //salviamo l'instanza pizza che si trova in pizzadata nel db
             db.Pizza.Add(pizzaData.Pizza);
             db.SaveChanges();
-
+            //fine
             return RedirectToAction("Index");
 
 
@@ -180,7 +187,7 @@ namespace la_mia_pizzeria_razor_layout.Controllers
 
             }
                
-
+            //inserimento funzione update
             pizza.Name = pizzaData.Pizza.Name;
             pizza.Description = pizzaData.Pizza.Description;
             pizza.Image = pizzaData.Pizza.Image;
@@ -209,7 +216,7 @@ namespace la_mia_pizzeria_razor_layout.Controllers
 
 
             db.SaveChanges();
-
+            //fine
             return RedirectToAction("Index");
 
 
@@ -228,9 +235,10 @@ namespace la_mia_pizzeria_razor_layout.Controllers
 
             }
 
+            //inserimento funzione delete
             db.Pizza.Remove(pizza);
             db.SaveChanges();
-
+            //fine
             return RedirectToAction("Index");
 
 
