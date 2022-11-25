@@ -4,6 +4,7 @@ using Microsoft.Extensions.Hosting;
 using la_mia_pizzeria_razor_layout.Models;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using la_mia_pizzeria_razor_layout.Models.Form;
+using la_mia_pizzeria_razor_layout.Models.Repositories;
 using Microsoft.SqlServer.Server;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -15,11 +16,15 @@ namespace la_mia_pizzeria_razor_layout.Controllers
     {
         PizzaDbContext db;
 
-        
+        IDbPizzaRepository pizzaRepository;
 
-        public PizzaController() : base()
+
+
+        public PizzaController(IDbPizzaRepository _pizzaRepository) : base()
         {
             db = new PizzaDbContext();
+
+            pizzaRepository = _pizzaRepository;
         }
 
         public IActionResult Index()
@@ -27,7 +32,7 @@ namespace la_mia_pizzeria_razor_layout.Controllers
             //PizzaDbContext db = new PizzaDbContext();
 
             //inserimento metodo all
-            List<Pizza> listaPizza = db.Pizza.Include(pizza => pizza.Category).ToList();
+            List<Pizza> listaPizza = pizzaRepository.All();
             //fine
 
             return View(listaPizza);
@@ -39,8 +44,14 @@ namespace la_mia_pizzeria_razor_layout.Controllers
             //PizzaDbContext db = new PizzaDbContext();
 
             //inserimento metodo GetById
-            Pizza pizza = db.Pizza.Where(p => p.Id == id).Include("Category").Include("Tags").FirstOrDefault();
+            Pizza pizza = pizzaRepository.GetById(id);
             //fine
+
+            if (pizza == null)
+            {
+                return NotFound("l'elemento non è stato trovato");
+            }
+
 
             return View(pizza);
         }
@@ -100,23 +111,10 @@ namespace la_mia_pizzeria_razor_layout.Controllers
             //implementazione del metodo create
             //associazione dei tag selezionato dall'utente al modello
             //creando una nuova lista di tipo tag, dove poi andremo ad aggiungere i tag selezionati dall'utente
-            pizzaData.Pizza.Tags = new List<Tag>();
-
-            foreach (int tagId in pizzaData.SelectedTags)
-            {
-                //ad ogni iterazione vai nella tabella tags e trova i tags uguali a quelli che a selezionato l'utente
-                Tag tag = db.Tags.Where(t => t.Id == tagId).FirstOrDefault();
-                //le iterazioni uguali vengono aggiunte al database
-                pizzaData.Pizza.Tags.Add(tag);
-
-
-            }
-
-
-            //salviamo l'instanza pizza che si trova in pizzadata nel db
-            db.Pizza.Add(pizzaData.Pizza);
-            db.SaveChanges();
+            pizzaRepository.Create(pizzaData.Pizza, pizzaData.SelectedTags);
             //fine
+
+
             return RedirectToAction("Index");
 
 
@@ -125,7 +123,7 @@ namespace la_mia_pizzeria_razor_layout.Controllers
 
         public IActionResult Update(int id)
         {
-            Pizza pizza = db.Pizza.Where(pizza => pizza.Id == id).Include(p => p.Tags).FirstOrDefault();
+            Pizza pizza = pizzaRepository.GetById(id);
 
             if (pizza == null)
                 return NotFound();
@@ -157,8 +155,6 @@ namespace la_mia_pizzeria_razor_layout.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Update(int id, PizzaForm pizzaData)
         {
-            //assegniamo al ID di pizza presente in pizzaData l'id passato dal form
-            //pizzaData.Pizza.Id = id;
 
             if (!ModelState.IsValid)
             {
@@ -179,44 +175,16 @@ namespace la_mia_pizzeria_razor_layout.Controllers
                 return View(pizzaData);
             }
 
-            Pizza pizza = db.Pizza.Where(pizza => pizza.Id == id).Include(p => p.Tags).FirstOrDefault();
+            Pizza pizza = pizzaRepository.GetById(id);
 
             if (pizza == null) {
 
                 return NotFound();
 
             }
-               
-            //inserimento funzione update
-            pizza.Name = pizzaData.Pizza.Name;
-            pizza.Description = pizzaData.Pizza.Description;
-            pizza.Image = pizzaData.Pizza.Image;
-            pizza.Price = pizzaData.Pizza.Price;
-            pizza.CategoryId = pizzaData.Pizza.CategoryId;
 
-            //eliminiamo i tags presenti nel oggetto presente sul db
-            pizza.Tags.Clear();
-
-            //se la lista SelectedTags ci arriva nulla la instanziamo con una lista vuota per farli passare la validazione
-            if (pizzaData.SelectedTags == null)
-            {
-                pizzaData.SelectedTags = new List<int>();
-            }
-
-            foreach (int tagId in pizzaData.SelectedTags)
-            {
-                //ad ogni iterazione vai nella tabella tags e trova i tags uguali a quelli che a selezionato l'utente
-                Tag tag = db.Tags.Where(t => t.Id == tagId).FirstOrDefault();
-                //le iterazioni uguali vengono aggiunte al database
-                pizza.Tags.Add(tag);
-
-
-            }
-
-
-
-            db.SaveChanges();
-            //fine
+            pizzaRepository.Update(pizza, pizzaData.Pizza, pizzaData.SelectedTags);
+            
             return RedirectToAction("Index");
 
 
@@ -226,7 +194,7 @@ namespace la_mia_pizzeria_razor_layout.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Delete(int id)
         {
-            Pizza pizza = db.Pizza.Where(pizza => pizza.Id == id).FirstOrDefault();
+            Pizza pizza = pizzaRepository.GetById(id);
 
             if (pizza == null)
             {
@@ -235,10 +203,7 @@ namespace la_mia_pizzeria_razor_layout.Controllers
 
             }
 
-            //inserimento funzione delete
-            db.Pizza.Remove(pizza);
-            db.SaveChanges();
-            //fine
+            pizzaRepository.Delete(pizza);
             return RedirectToAction("Index");
 
 
